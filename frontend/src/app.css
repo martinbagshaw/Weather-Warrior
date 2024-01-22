@@ -6,6 +6,10 @@ h1 {
   -webkit-text-stroke: 1px grey;
 }
 
+.warning-message {
+  color: #b30000;
+}
+
 @media screen and (min-width: 768px){
   h1 {
     font-size: 4rem;
@@ -27,16 +31,24 @@ body {
   padding: 2rem;
 }
 
-.search-bar {
+.search-form {
+  width: 100%;
+  position: relative;
+}
+
+.search-bar,
+.search-settings {
   display: flex;
   flex-direction: row;
   width: 100%;
   position: relative;
+  margin-bottom: 0.5rem;
 }
 
 .search-bar label {
   /* padding: 0.5rem 0; */
   visibility: hidden;
+  width: 0
 }
 
 .search-bar input {
@@ -44,6 +56,7 @@ body {
   padding: 0.25rem;
   box-sizing: border-box;
   border-radius: 0.25rem;
+  border-width: 0;
   max-width: 84%;
   flex-basis: 84%;
 }
@@ -66,6 +79,36 @@ body {
 
 .search-bar .search-button:hover {
   background: rgb(129, 35, 35);
+}
+
+.search-settings {
+  flex-direction: column;
+}
+
+.search-settings > label {
+  margin-top: 0.5rem;
+}
+
+.search-settings .forecast-period {
+  display: grid;
+  grid-template-columns: 2rem auto;
+  gap: 0.5rem;
+  align-items: center;
+  margin-top: 0.5rem
+}
+
+.search-settings .forecast-period input {
+  margin: 0.5rem 0;
+}
+
+/*
+TODO:
+
+include drive time checkbox
+*/
+
+.forecast {
+  margin-top: 1rem;
 }
 
 @media screen and (min-width: 768px){

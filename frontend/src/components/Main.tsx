@@ -1,10 +1,18 @@
 import React, { FC } from "react";
-import { SearchForm } from "./SearchForm";
+import { RootState } from "../state/RootState";
 
-export const Main: FC = (): JSX.Element => (
+import { SearchForm } from "./SearchForm";
+import { Forecast } from "./Forecast";
+
+interface MainProps {
+  rootState: RootState;
+}
+
+export const Main: FC<MainProps> = ({ rootState }): JSX.Element => (
   <main>
     <div className='container'>
-      <SearchForm />
+      <SearchForm searchState={rootState.searchState} />
+      <Forecast searchState={rootState.searchState} />
     </div>
   </main>
 );

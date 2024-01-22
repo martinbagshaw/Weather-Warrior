@@ -1,4 +1,4 @@
-import { Sites } from "./Sites";
+import { Search } from "./Search";
 
 /**
  * Controller
@@ -7,8 +7,9 @@ import { Sites } from "./Sites";
  * These are used in index.ts
  */
 export class Controller {
-  public sites: Sites;
+  public search: Search;
+
   constructor() {
-    this.sites = new Sites();
+    this.search = new Search();
   }
 }
