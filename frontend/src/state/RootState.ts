@@ -16,10 +16,8 @@ export class RootState {
   }
 
   public async init() {
+    // TODO: Load basic user data - e.g. location
     await this.userState.init();
-    await this.searchState.init();
     return true;
-    // TODO: Load basic user data
-    // const userLoaded = await this.rootStore.load();
   }
 }

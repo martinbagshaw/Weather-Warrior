@@ -23,7 +23,7 @@ export class AppRouter extends Component<AppRouterProps> {
     return (
       <Fragment>
         <Header />
-        <Main />
+        <Main rootState={this.props.rootState} />
       </Fragment>
     );
   }

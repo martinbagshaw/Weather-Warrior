@@ -30,7 +30,6 @@ module.exports = {
   devtool: prod ? undefined : "source-map",
   devServer: {
     proxy: {
-      "/sites": "http://localhost:8080/sites",
       "/search": "http://localhost:8080/search",
     },
   },
