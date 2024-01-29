@@ -34,12 +34,10 @@ app.listen(PORT, () => {
 TODO:
 - auto suggest / auto complete in the UI
 - make search more efficient
-- call directions API as part of this
 - allow for saving of results (new POST endpoint)
 - standardise response format (from controllers)
 */
 app.post("/search", async (req, res) => {
-  const searchResponse = await controller.search.getSiteInformation(req.body);
-  // console.log("searchResponse ", searchResponse);
+  const searchResponse = await controller.search.getSearchResult(req.body);
   res.json({ searchResponse });
 });

@@ -1,7 +1,11 @@
 import { makeObservable, action, observable } from "mobx";
+
 import { RootState } from "./RootState";
 import { ForecastPeriod, ForecastResponse } from "../../../model/Weather";
+
 import { ForecastState } from "./ForecastState";
+import { ResponseStatus, SearchResponseData, SearchResponseMessages } from "../../../model/Api";
+import { LocationState } from "./LocationState";
 
 /**
  * SearchState
@@ -10,32 +14,22 @@ import { ForecastState } from "./ForecastState";
  * If search results are not in sync with settings in the form, this will be used to indicate this in the UI
  */
 export class SearchState {
+  // TODO: remove. One hour intervals = current 24 hour period. See met office forecast for reference.
   @observable public forecastPeriod = ForecastPeriod.THREE;
   @observable public queryLocation = "";
-  @observable public locationWarning = false;
+  @observable public warningMessage = SearchResponseMessages.OK;
 
   @observable public forecastState?: ForecastState;
+  @observable public locationState?: LocationState;
 
   constructor(public rootState: RootState) {
     makeObservable(this);
   }
 
-  public warningMessage() {
-    if (this.locationWarning && !this.queryLocation) {
-      return "Please enter a location";
-    }
-    if (this.locationWarning && this.queryLocation) {
-      return "Location not found";
-    }
-    return "";
-  }
-
   @action public setQueryLocation(queryLocation: string) {
     this.queryLocation = queryLocation;
 
-    if (this.locationWarning) {
-      this.locationWarning = false;
-    }
+    this.warningMessage = SearchResponseMessages.OK;
   }
 
   @action public async setForecastPeriod(forecastPeriod: ForecastPeriod) {
@@ -43,26 +37,34 @@ export class SearchState {
 
     // TODO:
     // - make results disabled when settings change
-    // - let the user knowneed to perform search again
+    // - let the user know they need to perform the search again
     // await this.rootState.rootStore.searchStore.getSiteList(this.forecastPeriod);
   }
 
   @action public async search() {
     if (!this.queryLocation) {
-      this.locationWarning = true;
+      this.warningMessage = SearchResponseMessages.NO_QUERY;
       return;
     }
 
-    // TODO: include directions
-    // - if so, shape of siteInformation will have to change
-    const siteInformation = await this.rootState.rootStore.searchStore.getSiteInformation(this.queryLocation, this.forecastPeriod, false);
+    const { data, message, status } = await this.rootState.rootStore.searchStore.getSearchResult(this.queryLocation, this.forecastPeriod);
 
-    if (!siteInformation) {
-      this.locationWarning = true;
+    this.warningMessage = message;
+
+    if (status === ResponseStatus.NOT_FOUND) {
       return;
     }
 
-    const rawForecast = JSON.parse(siteInformation.data) as ForecastResponse;
-    this.forecastState = new ForecastState(rawForecast);
+    const { siteResponse, siteCountry, forecastResponse } = JSON.parse(data) as SearchResponseData;
+
+    // Will contain user contributed data, saved in mongodb
+    if (siteResponse) {
+      this.locationState = new LocationState(siteResponse, siteCountry);
+    }
+
+    // Will contain DataPoint forecast
+    if (forecastResponse) {
+      this.forecastState = new ForecastState(forecastResponse);
+    }
   }
 }

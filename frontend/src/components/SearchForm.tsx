@@ -19,12 +19,10 @@ export const SearchForm: FC<SearchFormProps> = observer(({ searchState }): JSX.E
 
   return (
     <>
-      {searchState.warningMessage() && (
-        <>
-          <p className='warning-message'>{searchState.warningMessage()}</p>
-          <br />
-        </>
-      )}
+      <>
+        <p className='warning-message'>{searchState.warningMessage}</p>
+        <br />
+      </>
       <form className='search-form' action='/search' method='get' onSubmit={(e) => handleSubmit(e)}>
         <fieldset className='search-bar'>
           <label htmlFor='location-search-input'>Location</label>

@@ -10,6 +10,7 @@ import { metOfficeEnvVars } from "../env-variables";
  * next 5 days weather
  * {url}/wxfcs/all/{dataType}/{locationId}
  *
+ * TODO:
  * previous 24 hours weather. Might just work with hourly locations, yet to find out
  * {url}/wxobs/all/datatype/{locationId}
  * ^ could be present day weather - e.g. how a forecast appears on Met Office
@@ -18,7 +19,11 @@ import { metOfficeEnvVars } from "../env-variables";
 export class DataPointWeather {
   constructor() {}
 
-  public async getSiteWeather(locationId: number): Promise<ForecastResponse | undefined> {
+  public async getSiteWeather(locationId = 0): Promise<ForecastResponse | undefined> {
+    if (!locationId) {
+      return;
+    }
+
     const { url, dataType, apiKey } = metOfficeEnvVars;
 
     const siteWeatherUrl = `${url}val/wxfcs/all/${dataType}${locationId}?res=3hourly&key=${apiKey}`;
