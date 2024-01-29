@@ -66,6 +66,11 @@ body {
   flex-basis: 12%;
   margin-left: 0.25rem;
   cursor: pointer;
+}
+
+.search-bar .search-button,
+.toggle-button {
+  cursor: pointer;
   font-size: 1rem;
   letter-spacing: 0.05rem;
   padding: 0.5rem;
@@ -77,9 +82,12 @@ body {
   color: white;
 }
 
+.toggle-button:hover,
+.toggle-button.active,
 .search-bar .search-button:hover {
   background: rgb(129, 35, 35);
 }
+
 
 .search-settings {
   flex-direction: column;
@@ -107,6 +115,7 @@ TODO:
 include drive time checkbox
 */
 
+.location,
 .forecast {
   margin-top: 1rem;
 }
@@ -115,4 +124,31 @@ include drive time checkbox
   .search-bar .search-button {
     font-size: 1.25rem;
   }
+}
+
+.location {
+  position: relative;
+  background-color: white;
+  border: 1px solid grey;
+  border-radius: 0.25rem;
+  padding: 0.5rem;
+  
+}
+
+.location .toggle-button {
+  position: absolute;
+  top: 0;
+  left: calc(-2rem - 5px);
+  width: 2rem;
+  height: 2rem;
+  padding: 0.25rem
+}
+
+.location .basics{
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr;
+}
+
+.location .details{
+  margin-top: 1rem;
 }

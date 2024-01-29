@@ -15,8 +15,8 @@ I want to be able to specify a maximum drive time and a maxiumu walk in time.
 **V1 / beta version**
 _This will rely upon information contributed by the user, for publicly available APIs for the sort of information required do not exist._
 
-- Search location, get weather, get drive time (API calls - MetOffice DataPoint, Google Directions API)
-- add notes to location (crags, walk in times, aspect, seepage, climbing type)
+- Search location, get weather (API call to MetOffice DataPoint), get drive time (Google Distance Matrix is a paid for service, so this will be replaced by user input drive time)
+- add notes to location (crags / buttresses, walk in times, aspect, seepage, climbing type)
 - save location(s) + user data
 - ^ associate locations to climbing type + seasons
 - Once saved, can select climbing type + drive time to search

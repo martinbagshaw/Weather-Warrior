@@ -9,6 +9,12 @@ import { ForecastResponse } from "../../../model/Weather";
  *
  * Results could be saved / cached to minimise API calls
  */
+
+// https://www.metoffice.gov.uk/services/data/datapoint/code-definitions
+// enum WeatherTypes {
+//    = 'Clear night'
+// }
+
 export class ForecastState {
   @observable public name = "";
 
@@ -19,6 +25,7 @@ export class ForecastState {
 
   private init(rawForecast: ForecastResponse) {
     console.log("rawForecast", rawForecast);
+
     const { name } = rawForecast.SiteRep.DV.Location;
     this.setName(name);
   }

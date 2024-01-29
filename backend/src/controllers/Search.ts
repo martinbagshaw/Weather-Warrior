@@ -1,5 +1,5 @@
-import { Site } from "../../../model/Weather";
-import { SearchRequest, SearchResponse, ResponseStatus } from "../../../model/Api";
+import { ForecastResponse, SiteResponse } from "../../../model/Weather";
+import { ResponseStatus, SearchRequest, SearchResponse, SearchResponseData, SearchResponseMessages } from "../../../model/Api";
 import { DataPointSites } from "./DataPointSites";
 import { DataPointWeather } from "./DataPointWeather";
 
@@ -36,34 +36,50 @@ export class Search {
     this.searchWeather = new DataPointWeather();
   }
 
-  public async getSiteInformation(searchRequest: SearchRequest): Promise<SearchResponse> {
-    const searchResponse = new SearchResponse();
+  public async getSearchResult(searchRequest: SearchRequest): Promise<SearchResponse> {
+    const { queryLocation, forecastPeriod } = searchRequest;
 
-    const { queryLocation, forecastPeriod, withDirections } = searchRequest;
+    const searchedLocation = queryLocation.toLowerCase();
+    const sites = await this.searchSites.getSites(forecastPeriod);
+
+    const searchedSite: SiteResponse | undefined = sites.find((s) => s.name.toLowerCase() === searchedLocation);
+
+    // Gets weather for the next 5 days, 3 hourly intervals
+    // TODO: get current day weather, hourly intervals
+    const siteForecast: ForecastResponse | undefined = await this.searchWeather.getSiteWeather(searchedSite?.id);
+
+    return this.createResponse(queryLocation, searchedSite, siteForecast);
+  }
+
+  private createResponse(queryLocation: string, site?: SiteResponse, forecast?: ForecastResponse): SearchResponse {
+    const searchResponse = new SearchResponse();
+    const searchInformation = new SearchResponseData();
 
     if (!queryLocation) {
+      searchResponse.message = SearchResponseMessages.NO_QUERY;
       return searchResponse;
     }
 
-    const searchTerm = queryLocation.toLowerCase();
-    const sites = await this.searchSites.getSites(forecastPeriod);
-    const searchSite: Site | undefined = sites.find((s) => s.name.toLowerCase() === searchTerm);
-
-    if (!searchSite) {
-      return searchResponse;
-    }
-    // TODO: combine searchSite with weather, and then directions
-    // - searchSite contains lat, long, and better name format, as well as elevation and region
-    // console.log("searchSite", searchSite);
-
-    // Gets weather for the next 5 days:
-    const siteForecast = await this.searchWeather.getSiteWeather(searchSite.id);
-    if (siteForecast) {
-      searchResponse.data = JSON.stringify(siteForecast);
-      searchResponse.status = ResponseStatus.OK;
+    if (site) {
+      searchInformation.setSiteInformation(site);
     }
 
-    // TODO: call directions API
+    if (forecast) {
+      const { country } = forecast.SiteRep.DV.Location;
+      searchInformation.setSiteCountry(country);
+      searchInformation.setSiteForecast(forecast);
+    }
+
+    if (!site) {
+      searchResponse.message = SearchResponseMessages.NO_SITE;
+    }
+
+    if (site && !forecast) {
+      searchResponse.message = SearchResponseMessages.NO_FORECAST;
+    }
+
+    searchResponse.data = JSON.stringify(searchInformation);
+    searchResponse.status = ResponseStatus.OK;
 
     return searchResponse;
   }

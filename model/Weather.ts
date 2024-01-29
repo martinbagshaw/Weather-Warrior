@@ -16,7 +16,7 @@ export enum ForecastPeriod {
   THREE = 3,
 }
 
-export interface Site {
+export interface SiteResponse {
   elevation: number;
   id: number;
   latitude: number;
@@ -26,9 +26,9 @@ export interface Site {
   unitaryAuthArea: string;
 }
 
-export interface SiteListResponse {
+export interface SiteResponseList {
   Locations: {
-    Location: Site[];
+    Location: SiteResponse[];
   };
 }
 
