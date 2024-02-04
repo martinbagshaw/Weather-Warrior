@@ -56,7 +56,7 @@ export class SearchResponseData {
   }
 
   // Comes from Forecast
-  // - will have to re-write database for this to work
+  // - will have to re-write to database for this to work
   public setSiteCountry(siteCountry: string) {
     const countryWords: string[] = [];
     siteCountry.split(" ").forEach((w) => {

@@ -1,0 +1,68 @@
+@import "./colors.scss";
+
+@mixin center-flex {
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+}
+
+.forecast-days {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  margin-top: 1rem;
+}
+
+.forecast-day {
+  @include center-flex;
+  justify-content: center;
+  min-height: 4rem;
+  padding: 0.5rem;
+  border-left: 1px solid $lightgrey;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+
+  &:first-child {
+    border-left: none
+  }
+  &:hover {
+    background-color: $offwhite
+  }
+  &.active {
+    background-color: $white;
+    font-weight: bold;
+    text-decoration: underline;
+    text-shadow: rgba($black, 0.32) 0px 0px 5px
+  }
+}
+
+.forecast-intervals {
+  display: grid;
+  /* will be repeat(24, 1fr) if I get hourly working*/
+  grid-template-columns: repeat(8, 1fr);
+  margin: 2rem 0 1rem;
+}
+
+.forecast-interval {
+  @include center-flex;
+  padding: 0.5rem;
+  border-left: 1px solid $lightgrey;
+
+  &:first-child {
+    border-left: none
+  }
+  > div:not(.weather-icon) {
+    margin: 0.25rem 0;
+  }
+}
+
+.interval-time {
+  padding-bottom: 0.5rem;
+  margin: 0 0.5rem 0.5rem;
+  border-bottom: 1px solid $lightgrey;
+}
+
+.precipitation-likely {
+  font-weight: bold;
+  color: $midblue;
+  text-shadow: rgba($midblue, 0.32) 0px 0px 5px
+}

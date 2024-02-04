@@ -3,6 +3,9 @@ import React, { ChangeEvent, FC, FormEvent } from "react";
 import { SearchState } from "../state/SearchState";
 import { ForecastPeriod } from "../../../model/Weather";
 
+import "./css/form-components.scss";
+import "./css/search-form.scss";
+
 interface SearchFormProps {
   searchState: SearchState;
 }
@@ -27,7 +30,7 @@ export const SearchForm: FC<SearchFormProps> = observer(({ searchState }): JSX.E
         <fieldset className='search-bar'>
           <label htmlFor='location-search-input'>Location</label>
           <input id='location-search-input' type='text' onChange={(e) => handleInputChange(e)} />
-          <button id='location-search-button' className='search-button' type='submit' onSubmit={(e) => handleSubmit(e)}>
+          <button id='location-search-button' className='search-button button' type='submit' onSubmit={(e) => handleSubmit(e)}>
             Search
           </button>
         </fieldset>

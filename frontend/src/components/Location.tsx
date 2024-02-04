@@ -2,6 +2,7 @@ import { observer } from "mobx-react";
 import React, { FC, useState } from "react";
 import { SearchState } from "../state/SearchState";
 
+import "./css/location.scss";
 interface LocationProps {
   searchState: SearchState;
 }
@@ -13,7 +14,7 @@ export const Location: FC<LocationProps> = observer(({ searchState }): JSX.Eleme
   if (locationState) {
     return (
       <div className='location'>
-        <button className={`toggle-button${showDetails ? " active" : ""}`} onClick={() => setShowDetails(!showDetails)}>
+        <button className={`button toggle-button${showDetails ? " active" : ""}`} onClick={() => setShowDetails(!showDetails)}>
           +
         </button>
         <div className='basics'>

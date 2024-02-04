@@ -108,7 +108,7 @@ interface Location {
   Period: Period[];
 }
 
-interface DV {
+export interface DV {
   dataDate: string;
   type: string;
   Location: Location; // A single location (in theory)

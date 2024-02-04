@@ -1,0 +1,19 @@
+@import "./colors.scss";
+
+.button {
+  font-size: 1rem;
+  letter-spacing: 0.05rem;
+  padding: 0.5rem;
+  box-sizing: border-box;
+  border-radius: 0.25rem;
+  border-width: 0;
+  background: $red;
+  transition: background-color 0.25s;
+  color: $white;
+
+  &:hover,
+  &.active {
+    cursor: pointer;
+    background: $darkred;
+  }
+}

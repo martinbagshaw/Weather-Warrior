@@ -1,0 +1,265 @@
+@import "./colors.scss";
+
+%hoverclear {
+  border-color: transparent;
+  background-color: transparent;
+  &:after, &:before {
+    border-color: transparent;
+    background-color: transparent;
+    content: '';
+  }
+}
+
+@mixin icon-hover {
+  &:hover {
+    @extend %hoverclear;
+
+    .weather-icon-above,
+    .weather-icon-under {
+      @extend %hoverclear;
+    }
+  }
+}
+
+@mixin round-icon {
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: 2.25rem;
+  border: 0.1rem solid $darkgrey;
+}
+
+@mixin coloured-icon($className, $colourVariable){
+  &.#{$className} {
+      background-color: $colourVariable;
+      &:after, &:before {
+        background-color: $colourVariable;
+      }
+      &:hover {
+        @extend %hoverclear;
+      }
+  }
+}
+
+//////////////////////////
+// Outer and Inner icons
+
+// Sun
+.sun {
+  @include round-icon;
+  @include icon-hover;
+  background-color: $yellow;
+}
+
+// Moon
+.moon {
+  @include round-icon;
+  @include icon-hover;
+  position: relative;
+  background-color: $white;
+
+  &:before {
+    content: "";
+    position: absolute;
+    width: 1.15rem;
+    height: 1.15rem;
+    border-radius: 1.15rem;
+    background: $white;
+    border: 0.1rem solid $darkgrey;
+    border-left-color: transparent;
+    left: -0.22rem;
+    top: 0.1rem;
+    transform: rotate(22deg);
+  }
+}
+
+
+//////////////////////////
+// Outer icons (cloud and moon)
+.weather-icon {
+  position: relative;
+  margin: 2rem auto 1rem;
+  cursor: pointer;
+
+  // Label (shown on hover)
+  .weather-description {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    text-align: center;
+    font-size: 0.75rem;
+    user-select: none;
+    color: transparent;
+  }
+
+  &:hover .weather-description{
+    color: $darkgrey;
+  }
+
+  // Cloud should always be the 'middle' icon; not above or below
+  &.cloud {
+    z-index: 1;
+    width: 3rem;
+    height: 3rem;
+    border-radius: 0.75rem;
+    height: 1.35rem;
+    margin-top: 2.65rem;// align with round icons
+    border: 0.1rem solid $darkgrey;
+    @include icon-hover;
+
+    @include coloured-icon('light-grey', $lightgrey);
+    @include coloured-icon('grey', $grey);
+
+
+    &:after, &:before {
+      z-index: 1;
+      content: "";
+      position: absolute;
+      width: 1.35rem;
+      height: 1.35rem;
+      border-radius: 1.5rem;
+      background: $white;
+      border: 0.1rem solid $darkgrey;
+      border-right-color: transparent;
+    }
+  
+    &:before {
+      top: -0.75rem;
+      right: 0.75rem;
+      transform: rotate(90deg);
+    }
+  
+    &:after {
+      top: -0.125rem;
+      left: -0.25rem;
+      transform: rotate(20deg);
+    } 
+  }  
+}
+
+//////////////////////////
+// Inner icons
+// - can combine up to 3, using the main outer icon and two inner icons (above and below)
+@mixin raindrop {
+  content: "";
+  position: absolute;
+  width: 0.4rem;
+  height: 0.6rem;
+  border-bottom-left-radius: 0.2rem;
+  border-bottom-right-radius: 0.2rem;
+  border-top-left-radius: 0.4rem;
+  background: $midblue;
+}
+
+@mixin snow {
+  content: "*";
+  position: absolute;
+  width: 0.4rem;
+  height: 0.6rem;
+  color: $grey;
+}
+
+@mixin fog {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0.25rem;
+  border-radius: 0.2rem;
+  background-color: $lightgrey;
+  width: 2.5rem;
+  height: 0.2rem;
+}
+
+// Sun, Moon
+.weather-icon-above {
+  position: relative;
+  top: -1.6rem;
+  width: 2rem;
+  height: 2rem;
+  transform: scale(0.75);
+  border-width: 0.133rem;
+
+  &.moon {
+    left: -0.9rem;
+    &:before {
+      border-width: 0.133rem;
+    }
+  }
+
+  &.sun {
+    left: 1.6rem;
+  }
+}
+
+
+// Rain, snow, sleet
+.weather-icon-under {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+
+  &.light-rain,
+  &.heavy-rain,
+  &.sleet {
+    top: 1.75rem;
+
+    &:before {
+      @include raindrop;
+      left: 0.8rem;
+      top: 0.2rem;
+    }
+  }
+
+  &.heavy-rain:after {
+    @include raindrop;
+    left: 1.4rem;
+    top: 0;
+  }
+
+  // Sleet - rain and snow
+  &.sleet:after {
+    @include snow;
+    left: 1.4rem;
+    top: -0.2rem;
+  }
+
+  // Snow
+  &.snow,
+  &.heavy-snow {
+    top: 1.75rem;
+
+    &:before {
+      @include snow;
+      left: 0.8rem;
+      top: 0.2rem;
+    }
+
+  }
+
+  &.heavy-snow {
+    &:after {
+      @include snow;
+      left: 1.4rem;
+      top: -0.2rem;
+    }
+  }
+
+  // Fog, mist
+  &.fog,
+  &.mist {
+    top: 1.75rem;
+
+    &:before,
+    &:after {
+      @include fog;
+    }
+
+    &:after {
+      @include fog;
+      top: 0.5rem;
+      width: 2rem;
+      left: 0.5rem;
+    }
+
+  }  
+}
