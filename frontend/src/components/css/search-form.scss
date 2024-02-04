@@ -1,0 +1,89 @@
+@import "./colors.scss";
+
+%flexcontainer {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  position: relative;
+  margin-bottom: 0.5rem;
+}
+
+.warning-message {
+  color: $midred;
+}
+
+.search-form {
+  width: 100%;
+  position: relative;
+}
+
+.search-bar {
+  @extend %flexcontainer;
+
+  label {
+    visibility: hidden;
+    width: 0
+  }
+
+  input {
+    font-size: 1.25rem;
+    padding: 0.25rem;
+    box-sizing: border-box;
+    border-radius: 0.25rem;
+    border-width: 0;
+    max-width: 84%;
+    flex-basis: 84%;
+  }
+
+  .search-button {
+    max-width: 12%;
+    flex-basis: 12%;
+    margin-left: 0.25rem;
+    cursor: pointer;
+
+    @media screen and (min-width: 768px){
+      font-size: 1.25rem;
+    }
+  }
+}
+
+.search-settings {
+  @extend %flexcontainer;
+  flex-direction: column;
+
+  > label {
+    margin-top: 0.5rem;
+  }
+
+  .forecast-period {
+    display: grid;
+    grid-template-columns: 2rem auto;
+    gap: 0.5rem;
+    align-items: center;
+    margin-top: 0.5rem;
+  
+    input {
+      margin: 0.5rem 0;
+    }
+  }
+}
+
+// .search-bar .search-button,
+// .toggle-button {
+//   cursor: pointer;
+//   font-size: 1rem;
+//   letter-spacing: 0.05rem;
+//   padding: 0.5rem;
+//   box-sizing: border-box;
+//   border-radius: 0.25rem;
+//   border-width: 0;
+//   background: $red;
+//   transition: background-color 0.25s;
+//   color: $white;
+// }
+
+// .toggle-button:hover,
+// .toggle-button.active,
+// .search-bar .search-button:hover {
+//   background: $darkred;
+// }

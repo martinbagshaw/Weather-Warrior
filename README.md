@@ -16,6 +16,7 @@ I want to be able to specify a maximum drive time and a maxiumu walk in time.
 _This will rely upon information contributed by the user, for publicly available APIs for the sort of information required do not exist._
 
 - Search location, get weather (API call to MetOffice DataPoint), get drive time (Google Distance Matrix is a paid for service, so this will be replaced by user input drive time)
+- once a weather forecast for a locaction has been found, it should be saved. A forecast for previous days weather will help to inform where the user best go climbing.
 - add notes to location (crags / buttresses, walk in times, aspect, seepage, climbing type)
 - save location(s) + user data
 - ^ associate locations to climbing type + seasons

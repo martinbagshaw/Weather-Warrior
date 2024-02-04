@@ -1,0 +1,17 @@
+.toggle-button {
+  position: absolute;
+  top: 0;
+  left: calc(-2rem - 5px);
+  width: 2rem;
+  height: 2rem;
+  padding: 0.25rem
+}
+
+.basics {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr;
+}
+
+.details{
+  margin-top: 1rem;
+}

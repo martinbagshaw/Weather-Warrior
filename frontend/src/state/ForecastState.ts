@@ -1,6 +1,7 @@
 import { makeObservable, action, observable } from "mobx";
 
-import { ForecastResponse } from "../../../model/Weather";
+import { ForecastUtil, WeatherStyle } from "../../../utils/ForecastUtil";
+import { DV, ForecastResponse } from "../../../model/Weather";
 
 /**
  * ForecastState
@@ -10,13 +11,26 @@ import { ForecastResponse } from "../../../model/Weather";
  * Results could be saved / cached to minimise API calls
  */
 
-// https://www.metoffice.gov.uk/services/data/datapoint/code-definitions
-// enum WeatherTypes {
-//    = 'Clear night'
-// }
+export interface Forecast {
+  date: string;
+  startTime: string;
+  days: ForecastDay[];
+}
+export interface ForecastDay {
+  date: string;
+  startTime: string;
+  intervals: ForecastInterval[];
+}
+export interface ForecastInterval {
+  // startTime: string,
+  precip: string;
+  temp: string;
+  tempFeels: string;
+  weatherInfo?: WeatherStyle;
+}
 
 export class ForecastState {
-  @observable public name = "";
+  @observable public forecast?: Forecast;
 
   constructor(private readonly rawForecast: ForecastResponse) {
     this.init(this.rawForecast);
@@ -24,13 +38,37 @@ export class ForecastState {
   }
 
   private init(rawForecast: ForecastResponse) {
-    console.log("rawForecast", rawForecast);
-
-    const { name } = rawForecast.SiteRep.DV.Location;
-    this.setName(name);
+    this.getForecast(rawForecast.SiteRep.DV);
   }
 
-  @action public setName(name: string) {
-    this.name = name;
+  @action
+  private getForecast(forecastData: DV) {
+    const days: ForecastDay[] = [];
+
+    forecastData.Location.Period.forEach((day) => {
+      const { value, Rep } = day;
+      const intervals: ForecastInterval[] = [];
+
+      Rep.forEach((period) => {
+        const code = Number(period.W);
+        const weatherInfo = ForecastUtil.getWeatherStyle(code);
+
+        intervals.push({
+          precip: period.Pp,
+          temp: period.T,
+          tempFeels: period.F,
+          weatherInfo,
+        });
+      });
+
+      const [dDate, dStartTime] = ForecastUtil.getDateTime(value);
+
+      days.push({ date: dDate, startTime: dStartTime, intervals });
+    });
+
+    const { dataDate } = forecastData;
+    const [fDate, fStartTime] = ForecastUtil.getDateTime(dataDate);
+
+    this.forecast = { date: fDate, startTime: fStartTime, days };
   }
 }

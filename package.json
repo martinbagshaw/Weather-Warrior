@@ -10,7 +10,9 @@
   "author": "Martin Bagshaw",
   "license": "ISC",
   "devDependencies": {
-    "concurrently": "^8.2.2"
-  },
-  "dependencies": {}
+    "concurrently": "^8.2.2",
+    "node-sass": "^9.0.0",
+    "postcss-loader": "^8.1.0",
+    "sass-loader": "^14.1.0"
+  }
 }
