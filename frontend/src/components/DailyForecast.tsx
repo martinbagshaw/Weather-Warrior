@@ -8,17 +8,10 @@ import "./css/weather-icons.scss";
 
 export interface DailyForecastProps {
   intervals: ForecastInterval[];
+  isObservation: boolean;
 }
 
-export const DailyForecast: FC<DailyForecastProps> = observer(({ intervals }): JSX.Element => {
-  const getTime = (intervalCount: number, index: number) => {
-    const remaining = 8 - intervalCount;
-    const hourNumber = (index + remaining) * 3;
-    const hours = hourNumber.toString().padStart(2, "0");
-
-    return <div className='interval-time'>{hours}:00</div>;
-  };
-
+export const DailyForecast: FC<DailyForecastProps> = observer(({ intervals, isObservation }): JSX.Element => {
   const getWeatherIcon = (weatherInfo?: WeatherStyle) => {
     if (!weatherInfo) {
       return;
@@ -41,10 +34,12 @@ export const DailyForecast: FC<DailyForecastProps> = observer(({ intervals }): J
   };
 
   return (
-    <div className='forecast-intervals'>
-      {intervals.map(({ precip, temp, tempFeels, weatherInfo }, index) => (
+    <div className={`forecast-intervals${isObservation ? " observation" : ""}`}>
+      {intervals.map(({ startTime, precip, temp, tempFeels, weatherInfo }, index) => (
         <div key={index} className='forecast-interval'>
-          <div>{getTime(intervals.length, index)}</div>
+          <div>
+            <div className='interval-time'>{startTime}:00</div>
+          </div>
           <div className={getPrecipStyle(precip)}>{precip}%</div>
           <div>{temp} C</div>
           <div>{tempFeels} C</div>

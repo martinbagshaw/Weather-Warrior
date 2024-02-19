@@ -15,9 +15,9 @@ export interface WeatherStyle {
 }
 
 export class ForecastUtil {
-  public static getDateTime(date: string): [string, string] {
+  public static getDateTime(date = ""): [string, string] {
     const bits = date.split(/[\T\Z,]+/).filter((i) => !!i);
-    if (bits.length > 2) {
+    if (!bits.length || bits.length > 2) {
       return ["", ""];
     }
 
@@ -31,6 +31,16 @@ export class ForecastUtil {
 
     return [dayText, timeText];
   }
+
+  // TODO: May require change, see forecast state
+  public static getStartTime = (intervalCount: number, index: number, isObservation = false) => {
+    // isObservation = hourly, !isObservation = three hourly
+    const dailyIntervals = isObservation ? 24 : 8;
+    const intervalDuration = isObservation ? 1 : 3;
+    const remaining = dailyIntervals - intervalCount;
+    const hourNumber = (index + remaining) * intervalDuration;
+    return hourNumber.toString().padStart(2, "0");
+  };
 
   /*
   untested:
