@@ -16,7 +16,7 @@ export class RootState {
   }
 
   public async init() {
-    // TODO: Load basic user data - e.g. location
+    // TODO: Load basic user data - e.g. location, search observations (24h)
     await this.userState.init();
     return true;
   }

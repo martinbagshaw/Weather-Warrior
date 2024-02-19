@@ -20,6 +20,10 @@ export const Forecast: FC<ForecastProps> = observer(({ searchState }): JSX.Eleme
 
   const { date, startTime, days } = forecastState.forecast;
 
+  if (!days.length) {
+    return <></>;
+  }
+
   return (
     <div className='forecast'>
       {date}, {startTime}:00 hours
@@ -31,7 +35,7 @@ export const Forecast: FC<ForecastProps> = observer(({ searchState }): JSX.Eleme
           </div>
         ))}
       </div>
-      <DailyForecast intervals={days[activeDay].intervals} />
+      <DailyForecast intervals={days[activeDay].intervals} isObservation={activeDay < forecastState.obsDays} />
     </div>
   );
 });

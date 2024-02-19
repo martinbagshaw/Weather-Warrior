@@ -1,5 +1,6 @@
 import { DatabaseUtils } from "../database/DatabaseUtils";
-import { ForecastPeriod, SiteResponse, SiteResponseList } from "../../../model/Weather";
+import { ForecastPeriod } from "../../../model/WeatherTypes";
+import { Site, SiteList } from "../../../model/DataPointTypes";
 
 import { metOfficeEnvVars } from "../env-variables";
 
@@ -12,9 +13,9 @@ import { metOfficeEnvVars } from "../env-variables";
 export class DataPointSites {
   constructor() {}
 
-  public async getSites(forecastPeriod: ForecastPeriod): Promise<SiteResponse[]> {
+  public async getSites(forecastPeriod: ForecastPeriod): Promise<Site[]> {
     const collectionName = `forecast-sites-period${forecastPeriod}`;
-    const sites = await DatabaseUtils.getCollectionContents<SiteResponse>(collectionName).catch(console.error);
+    const sites = await DatabaseUtils.getCollectionContents<Site>(collectionName).catch(console.error);
     const emptyDB = !sites || !sites.length;
 
     if (!emptyDB && sites) {
@@ -23,7 +24,7 @@ export class DataPointSites {
     } else {
       const sitesFromAPI = await this.getDataPointSites(forecastPeriod);
       if (sitesFromAPI.length) {
-        await DatabaseUtils.saveCollectionContents<SiteResponse>(collectionName, sitesFromAPI);
+        await DatabaseUtils.saveCollectionContents<Site>(collectionName, sitesFromAPI);
         return sitesFromAPI;
       }
     }
@@ -31,7 +32,7 @@ export class DataPointSites {
     return [];
   }
 
-  private async getDataPointSites(forecastPeriod: ForecastPeriod): Promise<SiteResponse[]> {
+  private async getDataPointSites(forecastPeriod: ForecastPeriod): Promise<Site[]> {
     const { url, dataType, apiKey, siteList, hourly, threeHourly } = metOfficeEnvVars;
 
     const configTime = forecastPeriod === ForecastPeriod.ONE ? hourly : threeHourly;
@@ -42,8 +43,8 @@ export class DataPointSites {
 
     if (response.ok) {
       // TODO: object mapper to avoid type casting
-      const siteList = (await response.json()) as SiteResponseList;
-      const sites: SiteResponse[] = siteList?.Locations.Location;
+      const siteList = (await response.json()) as SiteList;
+      const sites: Site[] = siteList?.Locations.Location;
 
       if (sites?.length) {
         console.log("got sites from datapoint");

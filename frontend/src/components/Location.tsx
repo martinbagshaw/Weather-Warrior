@@ -11,7 +11,7 @@ export const Location: FC<LocationProps> = observer(({ searchState }): JSX.Eleme
   const [showDetails, setShowDetails] = useState(false);
 
   const { locationState } = searchState;
-  if (locationState) {
+  if (locationState?.name) {
     return (
       <div className='location'>
         <button className={`button toggle-button${showDetails ? " active" : ""}`} onClick={() => setShowDetails(!showDetails)}>

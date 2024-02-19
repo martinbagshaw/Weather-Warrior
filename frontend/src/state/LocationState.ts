@@ -1,6 +1,6 @@
 import { makeObservable, action, observable } from "mobx";
 
-import { SiteResponse } from "../../../model/Weather";
+import { LocationForecast } from "../../../model/WeatherTypes";
 import { EnumUtil } from "../../../utils/EnumUtil";
 
 enum Regions {
@@ -34,23 +34,36 @@ export class LocationState {
 
   private id = 0;
 
-  constructor(
-    private readonly locationData: SiteResponse,
-    public readonly country: string
-  ) {
-    this.init(this.locationData);
+  constructor(private readonly locationForecast: LocationForecast) {
+    this.init(this.locationForecast);
     makeObservable(this);
   }
 
-  private init(locationData: SiteResponse) {
-    const { elevation, id, latitude, longitude, name, region, unitaryAuthArea } = locationData;
+  private init(locationForecast: LocationForecast) {
+    const { site, locationDetails } = locationForecast;
+    // const { elevation, id, latitude, longitude, name, region, unitaryAuthArea } = locationForecast;
 
-    this.id = id;
+    this.id = Number(site?.id ?? 0);
 
-    this.setName(name);
-    this.setArea(region, unitaryAuthArea);
-    this.setElevation(elevation);
-    this.setCoordinates(latitude, longitude);
+    if (locationDetails) {
+      this.setName(locationDetails.name);
+    }
+
+    if (site) {
+      const { region, unitaryAuthArea } = site;
+      if (region && unitaryAuthArea) {
+        this.setArea(region, unitaryAuthArea);
+      }
+    }
+
+    if (locationDetails?.elevation) {
+      this.setElevation(locationDetails.elevation);
+    }
+
+    if (locationDetails?.latitude && locationDetails?.longitude) {
+      const { latitude, longitude } = locationDetails;
+      this.setCoordinates(latitude, longitude);
+    }
   }
 
   @action public setName(name: string) {
@@ -65,7 +78,7 @@ export class LocationState {
     /* convert two letter region into an area */
     const regionText = EnumUtil.getEnumValueByKey(Regions, region);
 
-    this.area = `${area}, ${regionText ?? region}, ${this.country}`;
+    this.area = `${area}, ${regionText ?? region}, ${this.locationForecast.locationDetails?.country}`;
   }
 
   @action public setCoordinates(x: number, y: number) {

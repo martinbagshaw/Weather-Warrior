@@ -1,7 +1,8 @@
 import { observer } from "mobx-react";
 import React, { ChangeEvent, FC, FormEvent } from "react";
+
 import { SearchState } from "../state/SearchState";
-import { ForecastPeriod } from "../../../model/Weather";
+import { ForecastPeriod } from "../../../model/WeatherTypes";
 
 import "./css/form-components.scss";
 import "./css/search-form.scss";
@@ -33,27 +34,6 @@ export const SearchForm: FC<SearchFormProps> = observer(({ searchState }): JSX.E
           <button id='location-search-button' className='search-button button' type='submit' onSubmit={(e) => handleSubmit(e)}>
             Search
           </button>
-        </fieldset>
-        <fieldset className='search-settings'>
-          <label htmlFor='location-search-input'>Settings</label>
-          <div className='forecast-period'>
-            <input
-              type='radio'
-              id='hourly-forecast'
-              value='Hourly forecast'
-              checked={searchState.forecastPeriod === ForecastPeriod.ONE}
-              onChange={() => searchState.setForecastPeriod(ForecastPeriod.ONE)}
-            />
-            <label htmlFor='hourly-forecast'>Hourly forecast (fewer locations available)</label>
-            <input
-              type='radio'
-              id='three-hourly-forecast'
-              value='Three hourly forecast'
-              checked={searchState.forecastPeriod === ForecastPeriod.THREE}
-              onChange={() => searchState.setForecastPeriod(ForecastPeriod.THREE)}
-            />
-            <label htmlFor='three-hourly-forecast'>Three hourly forecast (more locations available)</label>
-          </div>
         </fieldset>
       </form>
     </>

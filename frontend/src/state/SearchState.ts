@@ -1,7 +1,7 @@
 import { makeObservable, action, observable } from "mobx";
 
 import { RootState } from "./RootState";
-import { ForecastPeriod, ForecastResponse } from "../../../model/Weather";
+import { ForecastPeriod } from "../../../model/WeatherTypes";
 
 import { ForecastState } from "./ForecastState";
 import { ResponseStatus, SearchResponseData, SearchResponseMessages } from "../../../model/Api";
@@ -12,10 +12,9 @@ import { LocationState } from "./LocationState";
  *
  * Handle search form state, and request data to the server
  * If search results are not in sync with settings in the form, this will be used to indicate this in the UI
+ *
  */
 export class SearchState {
-  // TODO: remove. One hour intervals = current 24 hour period. See met office forecast for reference.
-  @observable public forecastPeriod = ForecastPeriod.THREE;
   @observable public queryLocation = "";
   @observable public warningMessage = SearchResponseMessages.OK;
 
@@ -26,19 +25,13 @@ export class SearchState {
     makeObservable(this);
   }
 
+  // TODO:
+  // - make results disabled when settings change (e.g. location)
+  // - let the user know they need to perform the search again
   @action public setQueryLocation(queryLocation: string) {
     this.queryLocation = queryLocation;
 
     this.warningMessage = SearchResponseMessages.OK;
-  }
-
-  @action public async setForecastPeriod(forecastPeriod: ForecastPeriod) {
-    this.forecastPeriod = forecastPeriod;
-
-    // TODO:
-    // - make results disabled when settings change
-    // - let the user know they need to perform the search again
-    // await this.rootState.rootStore.searchStore.getSiteList(this.forecastPeriod);
   }
 
   @action public async search() {
@@ -47,7 +40,7 @@ export class SearchState {
       return;
     }
 
-    const { data, message, status } = await this.rootState.rootStore.searchStore.getSearchResult(this.queryLocation, this.forecastPeriod);
+    const { data, message, status } = await this.rootState.rootStore.searchStore.getSearchResult(this.queryLocation);
 
     this.warningMessage = message;
 
@@ -55,16 +48,18 @@ export class SearchState {
       return;
     }
 
-    const { siteResponse, siteCountry, forecastResponse } = JSON.parse(data) as SearchResponseData;
+    const { locationForecasts } = JSON.parse(data) as SearchResponseData;
 
-    // Will contain user contributed data, saved in mongodb
-    if (siteResponse) {
-      this.locationState = new LocationState(siteResponse, siteCountry);
+    const mainForecastSite = locationForecasts.find((s) => s.forecastPeriod === ForecastPeriod.THREE);
+    if (mainForecastSite) {
+      this.locationState = new LocationState(mainForecastSite);
+      // TODO:
+      // add user contributed data, saved in mongodb
     }
 
     // Will contain DataPoint forecast
-    if (forecastResponse) {
-      this.forecastState = new ForecastState(forecastResponse);
+    if (locationForecasts.length) {
+      this.forecastState = new ForecastState(locationForecasts);
     }
   }
 }
