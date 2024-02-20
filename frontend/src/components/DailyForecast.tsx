@@ -42,7 +42,7 @@ export const DailyForecast: FC<DailyForecastProps> = observer(({ intervals, isOb
           </div>
           <div className={getPrecipStyle(precip)}>{precip}%</div>
           <div>{temp} C</div>
-          <div>{tempFeels} C</div>
+          {tempFeels && <div>{tempFeels} C</div>}
           {getWeatherIcon(weatherInfo)}
         </div>
       ))}
