@@ -59,16 +59,6 @@ export class ForecastState {
     this.obsDays = obsDays;
   }
 
-  /*
-  TODO:
-
-  something is clearly wrong here
-  - need to look at dataDate property of observation data before merging data and adding time labels
-  - shows observation for previous day + part current day
-  - ... then skips a day and shows 3 days
-  
-  */
-
   @action
   private mergeForecastObservation(observationData: LocationForecast, forecastData: LocationForecast) {
     const hourlyForecasts = observationData.locationDetails?.dayForecasts ?? [];
@@ -76,7 +66,7 @@ export class ForecastState {
     const obsDays = hourlyForecasts.length;
     const forDays = threeHourlyForecasts.length;
 
-    const threeHourlyDays = threeHourlyForecasts.slice(obsDays, forDays);
+    const threeHourlyDays = threeHourlyForecasts.slice(obsDays - 1, forDays);
 
     this.setObsDays(obsDays);
 
@@ -84,9 +74,9 @@ export class ForecastState {
     const mergedOriginalDays = [...hourlyForecasts, ...threeHourlyDays];
     const days = this.getDaysData(mergedOriginalDays);
 
-    const [fDate, fStartTime] = ForecastUtil.getDateTime(forecastData.date);
+    const [date, startTime] = ForecastUtil.getDateTime(observationData.date);
 
-    this.forecast = { date: fDate, startTime: fStartTime, days };
+    this.forecast = { date, startTime, days };
   }
 
   @action
@@ -102,14 +92,16 @@ export class ForecastState {
   private getDaysData(dayIntervals: DayInterval[]) {
     const forecastDays: ForecastDay[] = [];
 
-    dayIntervals.forEach((day) => {
+    dayIntervals.forEach((day, dayIndex) => {
       const { dateStamp, intervals } = day;
+      const isObservation = dayIndex < this.obsDays;
+
       const forecastIntervals: ForecastInterval[] = [];
 
       intervals.forEach((period, index) => {
         const code = Number(period.W);
         const weatherInfo = ForecastUtil.getWeatherStyle(code);
-        const startTime = ForecastUtil.getStartTime(intervals.length, index, true);
+        const startTime = ForecastUtil.getStartTime(intervals.length, index, isObservation);
 
         forecastIntervals.push({
           startTime,
