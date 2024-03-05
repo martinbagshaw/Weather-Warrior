@@ -1,4 +1,4 @@
-import * as hourlySites from "../../test-data/hourly-sites.json";
+import * as hourlySites from "../../test-data/observation/hourly-sites.json";
 
 import { DistanceUtil } from "./DistanceUtil";
 

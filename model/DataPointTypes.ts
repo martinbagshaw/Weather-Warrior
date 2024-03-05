@@ -52,6 +52,30 @@
 // { name: 'Dp', units: 'C', '$': 'Dew Point' },
 // { name: 'H', units: '%', '$': 'Screen Relative Humidity' }
 
+// ends with 'O' = observation
+// ends with 'F' = forecast
+export enum WeatherUnits {
+  DEW_POINT_O = "Dp",
+  FEELS_LIKE_TEMPERATURE_F = "F",
+  MAX_UV_INDEX_F = "U",
+  PRECIPITATION_PROBABILITY_F = "Pp",
+  PRESSURE_O = "P",
+  PRESSURE_TENDENCY_O = "Pt",
+  WIND_DIRECTION = "D",
+  WIND_GUST = "G",
+  WIND_SPEED = "S",
+}
+/*
+hourly:
+    Dp
+    P
+    Pt
+
+    three hourly:
+    F
+    U
+    
+    */
 export interface Site {
   elevation: string;
   id: string;
@@ -72,15 +96,18 @@ export interface SiteList {
 
 export interface Rep {
   D: string;
-  F: string;
   G: string;
   H: string;
-  Pp: string;
   S: string;
   T: string;
   V: string;
   W: string;
-  U: string;
+  Dp?: string;
+  F?: string;
+  U?: string;
+  P?: string;
+  Pp?: string;
+  Pt?: string;
   $: string;
 }
 

@@ -16,7 +16,7 @@ I want to be able to specify a maximum drive time and a maxiumu walk in time.
 _This will rely upon information contributed by the user, for publicly available APIs for the sort of information required do not exist._
 
 - Search location, get weather (API call to MetOffice DataPoint), get drive time (Google Distance Matrix is a paid for service, so this will be replaced by user input drive time)
-- once a weather forecast for a locaction has been found, it should be saved. A forecast for previous days weather will help to inform where the user best go climbing.
+- once a weather forecast for a location has been found, it should be saved. A forecast for previous days weather will help to inform where the user best go climbing.
 - add notes to location (crags / buttresses, walk in times, aspect, seepage, climbing type)
 - save location(s) + user data
 - ^ associate locations to climbing type + seasons
@@ -58,3 +58,7 @@ export const metOfficeEnvVars = {
 5. `cd` into `/frontend`, run `npm install`
 6. `cd` into `/backend`, run `npm install`
 7. `cd ..` to go into root directory, then `npm run dev`, then go to [localhost:3000](http://localhost:3000/) in your browser
+
+## Application flow (so far)
+
+![Weather Warrior application flow](./img/weather-warrior.png)

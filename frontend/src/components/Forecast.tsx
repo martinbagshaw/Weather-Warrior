@@ -25,17 +25,24 @@ export const Forecast: FC<ForecastProps> = observer(({ searchState }): JSX.Eleme
   }
 
   return (
-    <div className='forecast'>
+    <div className="forecast">
       {date}, {startTime}:00 hours
-      <div className='forecast-days'>
+      <div className="forecast-days">
         {days.map(({ date }, index) => (
-          <div key={date} className={`forecast-day${activeDay === index ? " active" : ""}`} onClick={() => setActiveDay(index)}>
+          <div
+            key={date}
+            className={`forecast-day${activeDay === index ? " active" : ""}`}
+            onClick={() => setActiveDay(index)}
+          >
             {date}
             {/* Get midday or most common daily temperatures from analysing intervals */}
           </div>
         ))}
       </div>
-      <DailyForecast intervals={days[activeDay].intervals} isObservation={activeDay < forecastState.obsDays} />
+      <DailyForecast
+        intervals={days[activeDay].intervals}
+        isObservation={days[activeDay].intervals.length > 8}
+      />
     </div>
   );
 });
