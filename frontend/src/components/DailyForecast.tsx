@@ -1,8 +1,7 @@
 import { observer } from "mobx-react";
 import React, { FC } from "react";
 
-import { ForecastInterval } from "../state/ForecastState";
-import { WeatherStyle } from "../../../utils/ForecastUtil";
+import { ForecastInterval, WeatherStyle } from "../../../model/WeatherUITypes";
 
 import "./css/weather-icons.scss";
 
@@ -17,11 +16,13 @@ export const DailyForecast: FC<DailyForecastProps> = observer(({ intervals, isOb
       return;
     }
 
+    const { aboveIconClass, description, iconClass, underIconClass } = weatherInfo;
+
     return (
-      <div className={`weather-icon ${weatherInfo.iconClass}`}>
-        {weatherInfo.aboveIconClass && <div className={`weather-icon-above ${weatherInfo.aboveIconClass}`} />}
-        <span className='weather-description'>{weatherInfo.description}</span>
-        {weatherInfo.underIconClass && <div className={`weather-icon-under ${weatherInfo.underIconClass}`} />}
+      <div className={`weather-icon ${iconClass}`}>
+        {aboveIconClass && <div className={`weather-icon-above ${aboveIconClass}`} />}
+        <span className='weather-description'>{description}</span>
+        {underIconClass && <div className={`weather-icon-under ${underIconClass}`} />}
       </div>
     );
   };

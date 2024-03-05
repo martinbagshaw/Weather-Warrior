@@ -1,8 +1,8 @@
 import { makeObservable, action, observable } from "mobx";
 
-import { ForecastUtil, WeatherStyle } from "../../../utils/ForecastUtil";
+import { ForecastUtil } from "../../../utils/ForecastUtil";
 import { DayInterval, ForecastPeriod, LocationForecast } from "../../../model/WeatherTypes";
-import { DV, Period } from "../../../model/DataPointTypes";
+import { Forecast, ForecastDay, ForecastInterval } from "../../../model/WeatherUITypes";
 /**
  * ForecastState
  *
@@ -13,27 +13,7 @@ import { DV, Period } from "../../../model/DataPointTypes";
  * - Show location for observation and forecast
  */
 
-// Shared with UI layer. UIInterfaces?
-export interface Forecast {
-  date: string;
-  startTime: string;
-  days: ForecastDay[];
-}
-export interface ForecastDay {
-  date: string;
-  startTime: string;
-  intervals: ForecastInterval[];
-}
-export interface ForecastInterval {
-  startTime: string;
-  precip: string;
-  temp: string;
-  tempFeels: string;
-  weatherInfo?: WeatherStyle;
-}
-
 export class ForecastState {
-  @observable public obsDays = 0;
   @observable public forecast?: Forecast;
 
   constructor(private readonly locationForecasts: LocationForecast[]) {
@@ -42,8 +22,12 @@ export class ForecastState {
   }
 
   private init() {
-    const hourlyObservation = this.locationForecasts.find((l) => l.forecastPeriod === ForecastPeriod.ONE);
-    const mainForecast = this.locationForecasts.find((l) => l.forecastPeriod === ForecastPeriod.THREE);
+    const hourlyObservation = this.locationForecasts.find(
+      (l) => l.forecastPeriod === ForecastPeriod.ONE
+    );
+    const mainForecast = this.locationForecasts.find(
+      (l) => l.forecastPeriod === ForecastPeriod.THREE
+    );
 
     if (hourlyObservation && mainForecast) {
       this.mergeForecastObservation(hourlyObservation, mainForecast);
@@ -55,26 +39,17 @@ export class ForecastState {
   }
 
   @action
-  private setObsDays(obsDays: number) {
-    this.obsDays = obsDays;
-  }
-
-  @action
-  private mergeForecastObservation(observationData: LocationForecast, forecastData: LocationForecast) {
+  private mergeForecastObservation(
+    observationData: LocationForecast,
+    forecastData: LocationForecast
+  ) {
     const hourlyForecasts = observationData.locationDetails?.dayForecasts ?? [];
     const threeHourlyForecasts = forecastData.locationDetails?.dayForecasts ?? [];
-    const obsDays = hourlyForecasts.length;
-    const forDays = threeHourlyForecasts.length;
-
-    const threeHourlyDays = threeHourlyForecasts.slice(obsDays - 1, forDays);
-
-    this.setObsDays(obsDays);
 
     // Hourly + Three hourly
-    const mergedOriginalDays = [...hourlyForecasts, ...threeHourlyDays];
-    const days = this.getDaysData(mergedOriginalDays);
+    const days = ForecastUtil.mergeObservationForecastDays2(hourlyForecasts, threeHourlyForecasts);
 
-    const [date, startTime] = ForecastUtil.getDateTime(observationData.date);
+    const [date, startTime] = ForecastUtil.getDateTime(forecastData.date);
 
     this.forecast = { date, startTime, days };
   }
@@ -83,31 +58,30 @@ export class ForecastState {
   private getForecast(forecastData: LocationForecast) {
     const threeHourlyForecasts = forecastData.locationDetails?.dayForecasts ?? [];
 
-    const days = this.getDaysData(threeHourlyForecasts);
-    const [fDate, fStartTime] = ForecastUtil.getDateTime(forecastData.date);
+    const days = this.getThreeHourlyForecastDays(threeHourlyForecasts);
+    const [date, startTime] = ForecastUtil.getDateTime(forecastData.date);
 
-    this.forecast = { date: fDate, startTime: fStartTime, days };
+    this.forecast = { date, startTime, days };
   }
 
-  private getDaysData(dayIntervals: DayInterval[]) {
+  private getThreeHourlyForecastDays(dayIntervals: DayInterval[]) {
     const forecastDays: ForecastDay[] = [];
 
     dayIntervals.forEach((day, dayIndex) => {
       const { dateStamp, intervals } = day;
-      const isObservation = dayIndex < this.obsDays;
 
       const forecastIntervals: ForecastInterval[] = [];
 
       intervals.forEach((period, index) => {
         const code = Number(period.W);
         const weatherInfo = ForecastUtil.getWeatherStyle(code);
-        const startTime = ForecastUtil.getStartTime(intervals.length, index, isObservation);
+        const startTime = ForecastUtil.getStartTime(intervals.length, index);
 
         forecastIntervals.push({
           startTime,
-          precip: period.Pp,
+          precip: period.Pp ?? "",
           temp: period.T,
-          tempFeels: period.F,
+          tempFeels: period.F ?? "",
           weatherInfo,
         });
       });
